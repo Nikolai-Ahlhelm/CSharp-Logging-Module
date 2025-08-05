@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "G:\\source\\PSLM\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D6CEEFA5-99BC-4FE6-87FB-D812CB1FB31C}|PSLM\\PSLM.csproj|g:\\source\\pslm\\pslm\\pslm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D6CEEFA5-99BC-4FE6-87FB-D812CB1FB31C}|PSLM\\PSLM.csproj|solutionrelative:pslm\\pslm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PSLM.cs",
+              "DocumentMoniker": "G:\\source\\PSLM\\PSLM\\PSLM.cs",
+              "RelativeDocumentMoniker": "PSLM\\PSLM.cs",
+              "ToolTip": "G:\\source\\PSLM\\PSLM\\PSLM.cs",
+              "RelativeToolTip": "PSLM\\PSLM.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAmwCQAAAClAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-15T20:03:40.743Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

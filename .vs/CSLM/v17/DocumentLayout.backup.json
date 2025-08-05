@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\CSLM\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D6CEEFA5-99BC-4FE6-87FB-D812CB1FB31C}|CSLM\\CSLM.csproj|d:\\cslm\\cslm\\cslm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D6CEEFA5-99BC-4FE6-87FB-D812CB1FB31C}|CSLM\\CSLM.csproj|solutionrelative:cslm\\cslm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D6CEEFA5-99BC-4FE6-87FB-D812CB1FB31C}|CSLM\\CSLM.csproj|d:\\cslm\\cslm\\cslm.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D6CEEFA5-99BC-4FE6-87FB-D812CB1FB31C}|CSLM\\CSLM.csproj|solutionrelative:cslm\\cslm.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CSLM.cs",
+              "DocumentMoniker": "D:\\CSLM\\CSLM\\CSLM.cs",
+              "RelativeDocumentMoniker": "CSLM\\CSLM.cs",
+              "ToolTip": "D:\\CSLM\\CSLM\\CSLM.cs",
+              "RelativeToolTip": "CSLM\\CSLM.cs",
+              "ViewState": "AgIAAL8AAAAAAAAAAAA6wNkAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T06:10:07.593Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CSLM",
+              "DocumentMoniker": "D:\\CSLM\\CSLM\\CSLM.csproj",
+              "RelativeDocumentMoniker": "CSLM\\CSLM.csproj",
+              "ToolTip": "D:\\CSLM\\CSLM\\CSLM.csproj",
+              "RelativeToolTip": "CSLM\\CSLM.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-11T05:46:15.812Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

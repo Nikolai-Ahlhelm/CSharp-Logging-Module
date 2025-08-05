@@ -1,0 +1,11 @@
+D:\CSLM\CSLM\bin\Release\net9.0\CSLM.deps.json
+D:\CSLM\CSLM\bin\Release\net9.0\CSLM.dll
+D:\CSLM\CSLM\bin\Release\net9.0\CSLM.pdb
+D:\CSLM\CSLM\obj\Release\net9.0\CSLM.GeneratedMSBuildEditorConfig.editorconfig
+D:\CSLM\CSLM\obj\Release\net9.0\CSLM.AssemblyInfoInputs.cache
+D:\CSLM\CSLM\obj\Release\net9.0\CSLM.AssemblyInfo.cs
+D:\CSLM\CSLM\obj\Release\net9.0\CSLM.csproj.CoreCompileInputs.cache
+D:\CSLM\CSLM\obj\Release\net9.0\CSLM.dll
+D:\CSLM\CSLM\obj\Release\net9.0\refint\CSLM.dll
+D:\CSLM\CSLM\obj\Release\net9.0\CSLM.pdb
+D:\CSLM\CSLM\obj\Release\net9.0\ref\CSLM.dll

@@ -15,7 +15,7 @@ namespace CSLM
             set => _logFileName = value; 
         }
 
-        public string _logFilePath { get; set; }
+        private string _logFilePath { get; set; }
         public string LogFilePath
         {
             get => _logFilePath;
@@ -106,7 +106,9 @@ namespace CSLM
             }
             else
             {
-                Console.WriteLine("[CSLM] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
+                //Console.WriteLine("[CSLM:Core] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
+                Error("[CSLM:Core] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
+                _allowedTypes = _logLevels["DEFAULT"];
             }
         }
 
@@ -159,7 +161,7 @@ namespace CSLM
             {
                 WriteLog(entryType, message);
             }
-            else if (_logLevels["DEBUG"].Contains(entryType)) // Check if entry type is not a CSLM default => is custom type => always log
+            else if (!_logLevels["DEBUG"].Contains(entryType)) // Check if entry type is not a CSLM default => is custom type => always log
             //INFO: Debug contains all CLSM default types, therefore it is used to check for custom types
             {
                 //Custom types are always logged       
@@ -213,12 +215,12 @@ namespace CSLM
                     }
                     catch (Exception ex)
                     {
-                        Error($"LogCleanup failed: {Path.GetFileName(file)} -> {ex.Message}");
+                        Error($"[CSLM:LogCleanup] LogCleanup failed: {Path.GetFileName(file)} -> {ex.Message}");
                     }
                 }
             }
 
-            Info($"LogCleanup finished. Deleted {deleted} old log files.");
+            Info($"[CSLM:LogCleanup] LogCleanup finished. Deleted {deleted} old log files.");
         }
     }
 }

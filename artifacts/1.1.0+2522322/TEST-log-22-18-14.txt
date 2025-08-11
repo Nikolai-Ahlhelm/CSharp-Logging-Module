@@ -1,0 +1,13 @@
+[11-08-2025 22:18:14.336] [INFO] Logging Mode: 
+[11-08-2025 22:18:14.342] [INFO] Log Path: 
+[11-08-2025 22:18:14.342] [INFO] Info Test Message
+[11-08-2025 22:18:14.343] [DEBUG] Debug Test Message
+[11-08-2025 22:18:14.343] [WARNING] Warning Test Message
+[11-08-2025 22:18:14.343] [WARNING] 🔥 You can use emojis to make your logs more interesting
+[11-08-2025 22:18:14.344] [CRITICAL] Critical Test Message
+[11-08-2025 22:18:14.344] [ERROR] Error Test Message
+[11-08-2025 22:18:14.345] [INFO] Info function test
+[11-08-2025 22:18:14.346] [DEBUG] Debug function test
+[11-08-2025 22:18:14.346] [WARNING] Warning function test
+[11-08-2025 22:18:14.347] [CRITICAL] Critical function test
+[11-08-2025 22:18:14.348] [ERROR] Error function test

@@ -8,24 +8,32 @@
     "net9.0": []
   },
   "packageFolders": {
-    "/Users/nikolaiahlhelm/.nuget/packages/": {}
+    "C:\\Users\\ahlhe\\.nuget\\packages\\": {},
+    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/nikolaiahlhelm/Documents/GitHub/CSharp-Logging-Module/CSLM/CSLM.csproj",
+      "projectUniqueName": "G:\\source\\CSharp-Logging-Module\\CSLM\\CSLM.csproj",
       "projectName": "CSLM",
-      "projectPath": "/Users/nikolaiahlhelm/Documents/GitHub/CSharp-Logging-Module/CSLM/CSLM.csproj",
-      "packagesPath": "/Users/nikolaiahlhelm/.nuget/packages/",
-      "outputPath": "/Users/nikolaiahlhelm/Documents/GitHub/CSharp-Logging-Module/CSLM/obj/",
+      "projectPath": "G:\\source\\CSharp-Logging-Module\\CSLM\\CSLM.csproj",
+      "packagesPath": "C:\\Users\\ahlhe\\.nuget\\packages\\",
+      "outputPath": "G:\\source\\CSharp-Logging-Module\\CSLM\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/nikolaiahlhelm/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\ahlhe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -65,7 +73,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

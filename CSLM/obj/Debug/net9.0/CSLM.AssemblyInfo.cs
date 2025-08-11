@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CSLM")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7994ec85057a934dbc0ac3ecc30a58e56bd5c922")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7fecac6171a11ac116dd11b783e01bdaa3334f38")]
 [assembly: System.Reflection.AssemblyProductAttribute("CSLM")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CSLM")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,10 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using CSLM.Async;
 
 namespace CSLM
 {
+    public class LogEntry
+    {
+        public string Type;
+        public DateTime Timestamp;
+        public ConsoleColor Color;
+        public string Message;
+    }
+    
+    
     public class CSLM
     {
         //// Variables
@@ -84,7 +96,7 @@ namespace CSLM
         };
 
         // Dictionary to hold log levels and their allowed types
-        private readonly Dictionary<string, List<string>> _logLevels = new()
+        private readonly Dictionary<string, List<string>> LogLevels = new()
         {
             { "DEFAULT", new() { "ERROR", "INFO", "WARNING", "CRITICAL" } },
             { "DEBUG", new() { "ERROR", "INFO", "WARNING", "CRITICAL", "DEBUG" } },
@@ -99,15 +111,19 @@ namespace CSLM
 
         // Lock object for thread safety
         // This is used to ensure that file access is thread-safe
-        private readonly object _fileLock = new();
+        private readonly Lock _fileLock = new();
 
         // Lock object for logging operations
         // This is used to ensure that console output and file writing are thread-safe
-        private readonly object _logLock = new();
+        private readonly Lock _logLock = new();
 
         // Lock object for allowed types
         // This is used to ensure that the allowed types list is thread-safe when being modified
-        private readonly object _allowedTypesLock = new();
+        private readonly Lock _allowedTypesLock = new();
+        
+        // async console manager
+        private AsyncConsoleManager _consoleManager;
+        
 
         // Constructor
 
@@ -126,8 +142,12 @@ namespace CSLM
             // Fill _allowedTypes with the initial log type
             RefreshAllowedTypes();
 
+            
             _printToConsole = printToConsole;
             _timestampFormat = timestampFormat;
+            
+            // initialize async managers
+            _consoleManager = new AsyncConsoleManager(this);
 
         }
 
@@ -135,7 +155,7 @@ namespace CSLM
         {
             lock (_allowedTypesLock)
             { 
-                if (_logLevels.TryGetValue(_logType, out var allowedTypes))
+                if (LogLevels.TryGetValue(_logType, out var allowedTypes))
                 {
                     _allowedTypes = allowedTypes;
                 }
@@ -143,7 +163,7 @@ namespace CSLM
                 {
                     //Console.WriteLine("[CSLM:Core] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
                     Error("[CSLM:Core] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
-                    _allowedTypes = _logLevels["DEFAULT"];
+                    _allowedTypes = LogLevels["DEFAULT"];
                 }
             }
         }
@@ -151,7 +171,7 @@ namespace CSLM
 
         private string ReplaceTokens(string fileName)
         {
-            DateTime now = DateTime.Now;
+            var now = DateTime.Now;
             return fileName
                 .Replace("%dd%", now.ToString("dd"))
                 .Replace("%MM%", now.ToString("MM"))
@@ -174,7 +194,7 @@ namespace CSLM
             };
         }
 
-        private string NormalizeEntryType(string type)
+        private static string NormalizeEntryType(string type)
         {
             return type.ToUpper() switch
             {
@@ -199,40 +219,105 @@ namespace CSLM
                 {
                     WriteLog(entryType, message);
                 }
-                else if (!_logLevels["DEBUG"].Contains(entryType)) // Check if entry type is not a CSLM default => is custom type => always log
-                //INFO: Debug contains all CLSM default types, therefore it is used to check for custom types
+                else if (!LogLevels["DEBUG"].Contains(entryType)) // Check if the entry type is not a CSLM default => is custom type => always log
+                //INFO: Debug contains all CLSM default types, therefore, it is used to check for custom types
                 {
                     //Custom types are always logged       
                     WriteLog(entryType, message);
                 }
-                else { }
             }
         }
 
         private void WriteLog(string type, string message)
         {
-            string timestamp = DateTime.Now.ToString(_timestampFormat);
-            string output = $"[{timestamp}] [{type}] {message}";
+            var totalTime = System.Diagnostics.Stopwatch.StartNew();
+            
+            // create logEntry object
+            LogEntry logEntry = new LogEntry();
+            logEntry.Type = type;
+            logEntry.Timestamp = DateTime.Now;
+            logEntry.Message = message;
+            logEntry.Color = _typeColors.GetValueOrDefault(type, ConsoleColor.Magenta);
+            
+            var fileWriteTime = System.Diagnostics.Stopwatch.StartNew();
+            string output = $"[{logEntry.Timestamp.ToString(_timestampFormat)}] [{type}] {message}";
 
+            
             lock (_fileLock)
             {
-                File.AppendAllText(_logFileFullPath, output + Environment.NewLine);
+                
+                File.AppendAllText(_logFileFullPath, $"{output}{Environment.NewLine}");
+                fileWriteTime.Stop();
             }
             
-
+            var consoleWriteTime = System.Diagnostics.Stopwatch.StartNew();
             if (_printToConsole)
             {
                 lock (_logLock)
                 {
-                    var color = _typeColors.ContainsKey(type) ? _typeColors[type] : ConsoleColor.Magenta;
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    _consoleManager.AsyncLogEntry(logEntry);
+                    var color = _typeColors.GetValueOrDefault(type, ConsoleColor.Magenta);
+                    
+                }
+            }
+            consoleWriteTime.Stop();
+            totalTime.Stop();
+            
+            Console.WriteLine($"totalTime: {totalTime.Elapsed.TotalMilliseconds} ms");
+            Console.WriteLine($"fileWriteTime: {fileWriteTime.Elapsed.TotalMilliseconds} ms");
+            Console.WriteLine($"consoleWriteTime: {consoleWriteTime.Elapsed.TotalMilliseconds} ms");
+        }
+        
+        
+
+        /// OLD WRITE LOG FUNCTION WITHOUT ASYNC
+        /*
+        private void WriteLog(string type, string message)
+        {
+            var totalTime = System.Diagnostics.Stopwatch.StartNew();
+            var fileWriteTime = System.Diagnostics.Stopwatch.StartNew();
+            string timestamp = DateTime.Now.ToString(_timestampFormat);
+            string output = $"[{timestamp}] [{type}] {message}";
+
+            
+            lock (_fileLock)
+            {
+                
+                File.AppendAllText(_logFileFullPath, $"{output}{Environment.NewLine}");
+                fileWriteTime.Stop();
+            }
+            
+            var consoleWriteTime = System.Diagnostics.Stopwatch.StartNew();
+            if (_printToConsole)
+            {
+                lock (_logLock)
+                {
+                    var color = _typeColors.GetValueOrDefault(type, ConsoleColor.Magenta);
+                    SetConsoleColor(ConsoleColor.Gray);
                     Console.Write($"[{timestamp}] ");
-                    Console.ForegroundColor = color;
+                    
+                    SetConsoleColor(color);
                     Console.Write($"[{type}] ");
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    
+                    SetConsoleColor(ConsoleColor.Gray);
                     Console.WriteLine(message);
+                    
                     Console.ResetColor();
                 }
+            }
+            consoleWriteTime.Stop();
+            totalTime.Stop();
+            
+            Console.WriteLine($"totalTime: {totalTime.Elapsed.TotalMilliseconds} ms");
+            Console.WriteLine($"fileWriteTime: {fileWriteTime.Elapsed.TotalMilliseconds} ms");
+            Console.WriteLine($"consoleWriteTime: {consoleWriteTime.Elapsed.TotalMilliseconds} ms");
+        }*/
+
+        private static void SetConsoleColor(ConsoleColor color)
+        {
+            if (Console.ForegroundColor != color)
+            {
+                Console.ForegroundColor = color;
             }
         }
 
@@ -241,7 +326,6 @@ namespace CSLM
         public void Error(string msg) => Entry("ERROR", msg);
         public void Crit(string msg) => Entry("CRITICAL", msg);
         public void Debug(string msg) => Entry("DEBUG", msg);
-
-
+        
     }
 }

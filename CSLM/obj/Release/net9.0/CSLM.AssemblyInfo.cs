@@ -12,11 +12,11 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("CSLM")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2519208")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.1.0+2522322")]
 [assembly: System.Reflection.AssemblyProductAttribute("CSLM")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CSLM")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.1.0")]
 
 // Von der MSBuild WriteCodeFragment-Klasse generiert.
 

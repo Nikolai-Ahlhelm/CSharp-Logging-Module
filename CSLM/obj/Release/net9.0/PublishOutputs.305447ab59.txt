@@ -1,3 +1,0 @@
-D:\CSLM\CSLM\artifacts\1.0.0+2519208\CSLM.dll
-D:\CSLM\CSLM\artifacts\1.0.0+2519208\CSLM.deps.json
-D:\CSLM\CSLM\artifacts\1.0.0+2519208\CSLM.pdb

@@ -9,22 +9,13 @@ using System.Threading.Tasks;
 
 namespace CSLM.Async
 {
-    public class AsyncConsoleManager
+    internal class AsyncConsoleManager : AsyncFileManager
     {
-        // Log queue
-        private readonly ConcurrentQueue<LogEntry> _logQueue = new();   
         
-        // log event -> trigger dequeue
-        private readonly AutoResetEvent _logEvent = new(false);
-        
-        // de-/activate check for event
-        private bool _running = true;
-        
-        // log main
-        private CSLM _log;
+        private static readonly object _consoleLock = new();
         
         // constructor
-        public AsyncConsoleManager(CSLM log)
+        public AsyncConsoleManager(CSLM log) : base(log)
         {
             _log = log; 
             
@@ -32,38 +23,39 @@ namespace CSLM.Async
             Task.Run(ProcessQueue);
         }
         
-        // async log entry method
-        public void AsyncLogEntry(LogEntry logEntry)
+        private protected override void Process(object queueObject)
         {
-            _logQueue.Enqueue(logEntry); 
-            _logEvent.Set();
-        }
-        
-        // Process Queue task
-        private async Task ProcessQueue()
-        {
-            while (_running)
+            lock (_consoleLock)
             {
-                _logEvent.WaitOne();
+                //SetConsoleColor(ConsoleColor.Magenta);
+                //Console.WriteLine("[CLSM] [ConsoleManager:Process] Process executed.");
+                //Console.ResetColor();
 
-                while (_logQueue.TryDequeue(out var logEntry))
+                if (queueObject is LogEntry logEntry)
                 {
-                    SetConsoleColor(ConsoleColor.Magenta);
-                    Console.WriteLine($"[CLSM] [ConsoleManager:ProcessQueue] Queue count: {_logQueue.Count}");  
-                    
-                    SetConsoleColor(ConsoleColor.Gray);
+                    //SetConsoleColor(ConsoleColor.Magenta);
+                    //Console.WriteLine($"[CLSM] [ConsoleManager:Process] Processing log entry: {logEntry.Message}");
+
+                    SetConsoleColor(ConsoleColor.White);
                     Console.Write($"[{logEntry.Timestamp.ToString(_log.TimestampFormat)}] ");
-                    
+
                     SetConsoleColor(logEntry.Color);
                     Console.Write($"[{logEntry.Type}] ");
-                    
-                    SetConsoleColor(ConsoleColor.Gray);
+
+                    SetConsoleColor(ConsoleColor.White);
                     Console.WriteLine(logEntry.Message);
-                    
+
+                    Console.ResetColor();
+                }
+                else
+                {
+                    SetConsoleColor(ConsoleColor.Magenta);
+                    Console.WriteLine("[CLSM] [ConsoleManager:Process] Invalid object type.");
                     Console.ResetColor();
                 }
             }
         }
+            
         
         private static void SetConsoleColor(ConsoleColor color)
         {
@@ -72,8 +64,6 @@ namespace CSLM.Async
                 Console.ForegroundColor = color;
             }
         }
-        
-    
     }    
 }
 

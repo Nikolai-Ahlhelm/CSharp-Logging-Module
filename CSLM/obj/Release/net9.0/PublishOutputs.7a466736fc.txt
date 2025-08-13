@@ -1,3 +1,0 @@
-G:\source\CSharp-Logging-Module\artifacts\1.1.0+2522322\CSLM.dll
-G:\source\CSharp-Logging-Module\artifacts\1.1.0+2522322\CSLM.deps.json
-G:\source\CSharp-Logging-Module\artifacts\1.1.0+2522322\CSLM.pdb

@@ -1,0 +1,18 @@
+# Build results from VS
+/CSLM/bin
+/CSLM/obj
+
+#Visual Studio Files
+.vs
+/.vs
+
+#idead Files
+.idea
+/.idea
+
+#Artifacts
+artifacts
+
+# MacOS DS_Store
+.DS_Store
+

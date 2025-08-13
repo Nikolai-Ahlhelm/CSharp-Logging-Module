@@ -1,9 +1,9 @@
-# build.ps1     v1.0.0
+# build.ps1     v1.1.0
 
-# Input product version
+# Eingabe: Produktversion
 $version = Read-Host "🏷️ Version (e.g. 1.0.0): "
 
-# generate buildnumber: yyDDDHH (z. B. 2513009 = 2025, Tag 130, 09 Uhr)
+# Buildnummer erzeugen: yyDDDHH
 $now = Get-Date
 $year = $now.ToString("yy")
 $dayOfYear = $now.DayOfYear.ToString("D3")
@@ -11,17 +11,28 @@ $hour = $now.ToString("HH")
 $buildNumber = "$year$dayOfYear$hour"
 Write-Host "🔢 Build number generated: $buildNumber" -ForegroundColor Yellow
 
-
 $informationalVersion = "$version+$buildNumber"
 Write-Host "🏗️ Generating version: $informationalVersion ..." -ForegroundColor Yellow
 
-# targetfolder
-$outputDir = Join-Path -Path "artifacts" -ChildPath "$informationalVersion"
+# --- Clean bin/obj ---
+Write-Host "🧹 Cleaning old build folders..." -ForegroundColor Yellow
+$dirsToClean = @("bin", "obj")
+foreach ($dir in $dirsToClean) {
+    if (Test-Path $dir) {
+        Remove-Item $dir -Recurse -Force
+    }
+}
+
+# --- Output-Verzeichnis eine Ebene höher ---
+$projectRoot = Split-Path -Parent $PSCommandPath
+$outputRoot  = Join-Path $projectRoot "..\artifacts"
+$outputDir   = Join-Path $outputRoot "$informationalVersion"
+
 if (!(Test-Path $outputDir)) {
     New-Item -ItemType Directory -Path $outputDir | Out-Null
 }
 
-# build command
+# --- Build ---
 Write-Host "📦 Building project..." -ForegroundColor Yellow
 dotnet publish `
     -c Release `
@@ -32,10 +43,19 @@ dotnet publish `
     -p:FileVersion=$version
 Write-Host "📦 Build completed." -ForegroundColor Yellow
 
-# create version.txt
+# --- example.ps1 mitkopieren ---
+$exampleScript = Join-Path $projectRoot "example.ps1"
+if (Test-Path $exampleScript) {
+    Copy-Item $exampleScript $outputDir -Force
+    Write-Host "📄 example.ps1 copied to output folder." -ForegroundColor Yellow
+} else {
+    Write-Host "⚠️ example.ps1 not found in project directory." -ForegroundColor Red
+}
+
+# --- Version-Datei ---
 Set-Content -Path (Join-Path $outputDir "version.txt") -Value $informationalVersion
 
-# ZIP-Datei erstellen
+# --- ZIP erstellen ---
 Write-Host "🗃️ Creating archive file..." -ForegroundColor Yellow
 $zipPath = "$outputDir.zip"
 if (Test-Path $zipPath) {

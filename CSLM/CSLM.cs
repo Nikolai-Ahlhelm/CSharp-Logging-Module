@@ -15,8 +15,8 @@ namespace CSLM
         public ConsoleColor Color;
         public string Message;
     }
-    
-    
+
+
     public class CSLM
     {
         //// Variables

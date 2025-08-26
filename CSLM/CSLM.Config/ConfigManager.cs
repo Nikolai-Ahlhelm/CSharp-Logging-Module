@@ -76,8 +76,24 @@ namespace CSLM.Config
             }
         }
 
+        internal Config DeserializeConfig(string config)
+        {
+            return JsonConvert.DeserializeObject<Config>(config);
+        }
 
-      
+        internal Config LoadConfig(string path)
+        {
+            if (IfConfigExists(path))
+            {
+                return DeserializeConfig(ReadConfigFile(path));
+            }
+            else
+            {
+                return InitializeConfigObject();
+            }
+        }
+
+
 
 
 

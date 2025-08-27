@@ -22,13 +22,18 @@ namespace CSLM
     {
         //// Variables
         
+        // CSLM ConfigManager
+        private Config.ConfigManager _configManager;
+        
+        // CSLM Config
+        private Config.Config _config;
         
         // CSLM Debug Mode
-        private bool _clsmDebugMode = false;
-        public bool CLSMDebugMode
+        private bool _cslmDebugMode = false;
+        public bool CSLMDebugMode
         {
-            get => _clsmDebugMode;
-            set => _clsmDebugMode = value;
+            get => _cslmDebugMode;
+            set => _cslmDebugMode = value;
         }
 
         // Log file name, can contain tokens like %dd%, %MM%, %yyyy%, %hh%, %m%, %ss%
@@ -142,6 +147,10 @@ namespace CSLM
 
         public CSLM(string logFileName, string logFilePath, string logType = "DEFAULT", bool printToConsole = true, string timestampFormat = "dd-MM-yyyy HH:mm:ss.fff")
         {
+            // config manager & config
+            _configManager = new Config.ConfigManager(this);
+            _config = _configManager._config;
+            
             // Replace file name token
             _logFileName = ReplaceTokens(logFileName);
 
@@ -244,7 +253,7 @@ namespace CSLM
 
         internal void DebugWriteLog(string type, string message)
         {
-            if (_clsmDebugMode)
+            if (_cslmDebugMode)
             {
                 string normalizedType = NormalizeEntryType(type);
                 string clsmType = $"CLSM:{type}";

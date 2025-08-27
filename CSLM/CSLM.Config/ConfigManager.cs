@@ -10,33 +10,17 @@ namespace CSLM.Config
 {
     internal class ConfigManager
     {
-        Config _config;
-        CSLM _log;
-        String _configPath = $"{AppContext.BaseDirectory}\\config.json";
+        internal Config _config;
+        private CSLM _log;
+        internal String _configPath = $"{AppContext.BaseDirectory}\\config.json";
 
-        internal ConfigManager(CSLM log) 
+        internal ConfigManager(CSLM log, string configPath = "") 
         {
             _log = log;
-            _config = InitializeConfigObject();
 
-            // Load the configuration from the file if it exists
-            if (IfConfigExists(_configPath))
-            {
-                try
-                {
-                    string json = File.ReadAllText(_configPath);
-                    _config = JsonConvert.DeserializeObject<Config>(json);
-                    _log.Log("Configuration loaded successfully.", "ConfigManager", "INFO");
-                }
-                catch (Exception ex)
-                {
-                    _log.Log($"Error loading configuration: {ex.Message}", "ConfigManager", "ERROR");
-                }
-            }
-            else
-            {
-                _log.Log("Configuration file not found, using default settings.", "ConfigManager", "WARN");
-            }
+            if (configPath != "") { _configPath = configPath; }
+            
+            _config = LoadConfig(_configPath);
         }
 
         private Config InitializeConfigObject()

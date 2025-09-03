@@ -4,13 +4,16 @@ Add-Type -Path ".\CSLM.dll"
 # Arguments: logFileName, logFilePath, allowedTypes[List[string]], logType, printToConsole, timestampFormat
 
 # CSLM-Instanz erstellen
-$log = [CSLM.CSLM]::new(
-    "TEST-log-%hh%-%m%-%ss%.txt", # logFileName
-    ".\",                          # logFilePath
-    "DEBUG",                       # logType
-    $true,                         # printToConsole
-    "dd-MM-yyyy HH:mm:ss.fff"      # timestampFormat
-)
+<#$log = [CSLM.CSLM]::new(
+    "TEST-log-%hh%-%m%-%ss%.txt",   # logFileName
+    ".\",                           # logFilePath
+    "DEBUG",                        # logType
+    $true,                          # printToConsole
+    "dd-MM-yyyy HH:mm:ss.fff"       # timestampFormat
+) #>
+
+$log = [CSLM.CSLM]::new($true)
+
 
 # Test log entries
 $log.Entry("Info", "Logging Mode: $($logger.LogType)")

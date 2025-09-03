@@ -15,7 +15,7 @@ namespace CSLM
         public ConsoleColor Color;
         public string Message;
     }
-
+    
 
 
     public class CSLM
@@ -143,13 +143,26 @@ namespace CSLM
         private AsyncFileManager _fileManager;
         
 
-        // Constructor
+        // Main constructor
 
-        public CSLM(string logFileName, string logFilePath, string logType = "DEFAULT", bool printToConsole = true, string timestampFormat = "dd-MM-yyyy HH:mm:ss.fff")
+        public CSLM(
+            string logFileName = "log-%hh%-%m%-%ss%.txt", 
+            string logFilePath = "logs", 
+            string logType = "DEFAULT", 
+            bool printToConsole = true, 
+            string timestampFormat = "dd-MM-yyyy HH:mm:ss.fff",
+            bool configFileMode = false
+            )
         {
-            // config manager & config
-            _configManager = new Config.ConfigManager(this);
-            _config = _configManager._config;
+            
+            if (configFileMode)
+            {
+                // config manager & config
+                _configManager = new Config.ConfigManager(this);
+                _config = _configManager._config;
+                return;
+            }
+
             
             // Replace file name token
             _logFileName = ReplaceTokens(logFileName);
@@ -173,6 +186,16 @@ namespace CSLM
             _fileManager = new AsyncFileManager(this);
 
         }
+        
+        public static CSLM FromConfig()
+        {
+            var logger = new CSLM(); // normal init
+            // config manager & config
+            logger._configManager = new Config.ConfigManager(logger);
+            logger._config = logger._configManager._config;
+            return logger;
+        }
+
 
         private void RefreshAllowedTypes()
         {

@@ -38,66 +38,55 @@ namespace CSLM
 
         // Log file name, can contain tokens like %dd%, %MM%, %yyyy%, %hh%, %m%, %ss%
         // Example: "log_%dd%-%MM%-%yyyy%_%hh%-%m%-%ss%.txt"
-        private string _logFileName;
-        // Property to get or set the log file name
         public string LogFileName
         {
-            get => _logFileName;
-            set => _logFileName = value;
+            get => _config.fileConfig.fileName;
+            set => _config.fileConfig.fileName = ReplaceTokens(value);
         }
+        // Property to get or set the log file name
+
 
         // Relative log file path
-        private string _logFilePath { get; set; }
-        // Property to get or set the log file path
         public string LogFilePath
         {
-            get => _logFilePath;
-            set
+            get => _config.fileConfig.filePath;
+            set 
             {
-                _logFilePath = Path.GetFullPath(value);
-                Directory.CreateDirectory(_logFilePath);
+                _config.fileConfig.filePath = Path.GetFullPath(value);
+                Directory.CreateDirectory(LogFilePath);
             }
         }
 
+
         // Log type, can be one of the predefined types or a custom type
 
-        private string _logType;
-        // Property to get or set the log type
         public string LogType
         {
-            get => _logType;
+            get => _config.logType;
             set
             {
-                _logType = NormalizeLogType(value);
+                _config.logType = NormalizeLogType(value);
                 RefreshAllowedTypes();
             }
         }
 
         // Bool to enable or disable printing log entries to the console
-        private bool _printToConsole;
-
-        // Property to get or set whether to print log entries to the console
         public bool PrintToConsole
         {
-            get => _printToConsole;
-            set => _printToConsole = value;
+            get => _config.printToConsole;
+            set => _config.printToConsole = value;
         }
 
-        // Timestamp format for log entries
-        private string _timestampFormat;
 
-        // Property to get or set the timestamp format
+        // Timestamp format for log entries
         public string TimestampFormat
         {
-            get => _timestampFormat;
-            set => _timestampFormat = value;
+            get => _config.timestampFormat;
+            set => _config.timestampFormat = value;
         }
 
         // Full path of the log file
-        private string _logFileFullPath => Path.Combine(_logFilePath, _logFileName);
-
-        // Property to get the full path of the log file
-        public string LogFileFullPath => _logFileFullPath;
+        public string LogFileFullPath => Path.Combine(LogFilePath, LogFileName);
 
         // Dictionary to hold log types and their corresponding console colors
         private readonly Dictionary<string, ConsoleColor> _typeColors = new()
@@ -111,7 +100,7 @@ namespace CSLM
         };
 
         // Dictionary to hold log levels and their allowed types
-        private readonly Dictionary<string, List<string>> LogLevels = new()
+        private readonly Dictionary<string, List<string>> _logLevels = new()
         {
             { "DEFAULT", new() { "ERROR", "INFO", "WARNING", "CRITICAL" } },
             { "DEBUG", new() { "ERROR", "INFO", "WARNING", "CRITICAL", "DEBUG" } },
@@ -150,50 +139,35 @@ namespace CSLM
             string logFilePath = "logs", 
             string logType = "DEFAULT", 
             bool printToConsole = true, 
-            string timestampFormat = "dd-MM-yyyy HH:mm:ss.fff",
-            bool configFileMode = false
+            string timestampFormat = "dd-MM-yyyy HH:mm:ss.fff"
             )
         {
-            
-            if (configFileMode)
-            {
-                // config manager & config
-                _configManager = new Config.ConfigManager(this);
-                _config = _configManager._config;
-                return;
-            }
-
-            
-            // Replace file name token
-            _logFileName = ReplaceTokens(logFileName);
-
-            // Ensure log file path is absolute and create directory if it doesn't exist
-            _logFilePath = Path.GetFullPath(logFilePath);
-            Directory.CreateDirectory(_logFilePath);
-
-            // Normalize log type
-            _logType = NormalizeLogType(logType);
-
-            // Fill _allowedTypes with the initial log type
-            RefreshAllowedTypes();
-
-            
-            _printToConsole = printToConsole;
-            _timestampFormat = timestampFormat;
-            
-            // initialize async managers
+            // Initialize async managers
             _consoleManager = new AsyncConsoleManager(this);
             _fileManager = new AsyncFileManager(this);
 
+            // Initialize config & config manager
+            _configManager = new Config.ConfigManager(this);
+            _config = _configManager._config;
+
+            // Apply parameters to config
+            LogFileName = logFileName;
+            LogFilePath = logFilePath;
+            LogType = logType;
+            PrintToConsole = printToConsole;
+            TimestampFormat = timestampFormat;
         }
         
-        public static CSLM FromConfig()
+        public static CSLM ConfigFileMode(string configFilePath)
         {
-            var logger = new CSLM(); // normal init
+            var cslm = new CSLM(); // normal init
             // config manager & config
-            logger._configManager = new Config.ConfigManager(logger);
-            logger._config = logger._configManager._config;
-            return logger;
+            Console.WriteLine($"[CSLM:Core] [ConfigFileMode] Loading config from {Path.GetFullPath(configFilePath)}");
+            cslm._configManager._configPath = Path.GetFullPath(configFilePath);
+            cslm._configManager.LoadConfigFile(Path.GetFullPath(configFilePath));
+            Console.WriteLine($"[CSLM:Core] [ConfigFileMode] Config applied");
+
+            return cslm;
         }
 
 
@@ -201,7 +175,7 @@ namespace CSLM
         {
             lock (_allowedTypesLock)
             { 
-                if (LogLevels.TryGetValue(_logType, out var allowedTypes))
+                if (_logLevels.TryGetValue(LogType, out var allowedTypes))
                 {
                     _allowedTypes = allowedTypes;
                 }
@@ -209,7 +183,7 @@ namespace CSLM
                 {
                     //Console.WriteLine("[CSLM:Core] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
                     Error("[CSLM:Core] [RefreshAllowedTypes] Invalid logType, fallback to DEFAULT");
-                    _allowedTypes = LogLevels["DEFAULT"];
+                    _allowedTypes = _logLevels["DEFAULT"];
                 }
             }
         }
@@ -265,7 +239,7 @@ namespace CSLM
                 {
                     WriteLog(entryType, message);
                 }
-                else if (!LogLevels["DEBUG"].Contains(entryType)) // Check if the entry type is not a CSLM default => is custom type => always log
+                else if (!_logLevels["DEBUG"].Contains(entryType)) // Check if the entry type is not a CSLM default => is custom type => always log
                 //INFO: Debug contains all CLSM default types, therefore, it is used to check for custom types
                 {
                     //Custom types are always logged       
@@ -288,7 +262,7 @@ namespace CSLM
                 debugLogEntry.Message = message;
                 debugLogEntry.Color = _typeColors.GetValueOrDefault(normalizedType, ConsoleColor.Magenta);  
                 lock (_fileLock) { _fileManager.AddToQueue(debugLogEntry); }
-                if (_printToConsole) { lock (_logLock) { _consoleManager.AddToQueue(debugLogEntry); } }
+                if (PrintToConsole) { lock (_logLock) { _consoleManager.AddToQueue(debugLogEntry); } }
             }
         }
 
@@ -304,13 +278,13 @@ namespace CSLM
             logEntry.Color = _typeColors.GetValueOrDefault(type, ConsoleColor.Magenta);
             
             
-            //string output = $"[{logEntry.Timestamp.ToString(_timestampFormat)}] [{type}] {message}";
+            //string output = $"[{logEntry.Timestamp.ToString(TimestampFormat)}] [{type}] {message}";
 
             var fileWriteTime = System.Diagnostics.Stopwatch.StartNew();
             lock (_fileLock)
             {
                 _fileManager.AddToQueue(logEntry);
-                //File.AppendAllText(_logFileFullPath, $"{output}{Environment.NewLine}");
+                //File.AppendAllText(LogFileFullPath, $"{output}{Environment.NewLine}");
                 //
             }
             fileWriteTime.Stop();
@@ -319,7 +293,7 @@ namespace CSLM
 
             lock (_logLock)
             {
-                if (_printToConsole)
+                if (PrintToConsole)
                 {
                 _consoleManager.AddToQueue(logEntry);
                 }
@@ -341,19 +315,19 @@ namespace CSLM
         {
             var totalTime = System.Diagnostics.Stopwatch.StartNew();
             var fileWriteTime = System.Diagnostics.Stopwatch.StartNew();
-            string timestamp = DateTime.Now.ToString(_timestampFormat);
+            string timestamp = DateTime.Now.ToString(TimestampFormat);
             string output = $"[{timestamp}] [{type}] {message}";
 
             
             lock (_fileLock)
             {
                 
-                File.AppendAllText(_logFileFullPath, $"{output}{Environment.NewLine}");
+                File.AppendAllText(LogFileFullPath, $"{output}{Environment.NewLine}");
                 fileWriteTime.Stop();
             }
             
             var consoleWriteTime = System.Diagnostics.Stopwatch.StartNew();
-            if (_printToConsole)
+            if (PrintToConsole)
             {
                 lock (_logLock)
                 {

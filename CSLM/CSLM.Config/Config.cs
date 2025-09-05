@@ -1,6 +1,9 @@
+using Newtonsoft.Json;
+
 namespace CSLM.Config
 {
 
+    [JsonObject(MemberSerialization.Fields)]
     public class Config
     {
         internal string logType = "DEFAULT";
@@ -12,27 +15,30 @@ namespace CSLM.Config
         internal SQLConfig sqlConfig = new SQLConfig();
     }
 
+    [JsonObject(MemberSerialization.Fields)]
     internal class FileConfig
     {
-        private string filePath = "\\logs";
-        private string fileName = "log-%hh%-%m%-%ss%.txt";
+        internal string filePath = "\\logs";
+        internal string fileName = "log-%hh%-%m%-%ss%.txt";
     }
 
+    [JsonObject(MemberSerialization.Fields)]
     internal class SQLConfig
     {
 
-        private string sqlServer = "localhost";
-        private int sqlPort = 1433;
-        private string sqlUser = "cslm_user";
-        private string sqlPassword = "password";
-        private string databaseName = "CSLM";
-        private string tablePrefix = "CSLM_";
+        internal string sqlServer = "localhost";
+        internal int sqlPort = 1433;
+        internal string sqlUser = "cslm_user";
+        internal string sqlPassword = "password";
+        internal string databaseName = "CSLM";
+        internal string tablePrefix = "CSLM_";
     }
 
+    [JsonObject(MemberSerialization.Fields)]
     internal class SQLiteConfig
     {
-        private string sqliteFilePath = "cslm.db";
-        private string tablePrefix = "CSLM_";
+        internal string sqliteFilePath = "cslm.db";
+        internal string tablePrefix = "CSLM_";
     }
 
 

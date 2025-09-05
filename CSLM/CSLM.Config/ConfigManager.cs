@@ -18,9 +18,15 @@ namespace CSLM.Config
         {
             _log = log;
 
-            if (configPath != "") { _configPath = configPath; }
+            if (configPath != "") 
+            { 
+                _configPath = configPath;
+                _config = LoadConfigFile(_configPath);
+                return;
+            }
             
-            _config = LoadConfig(_configPath);
+            _config = InitializeConfigObject();
+
         }
 
         private Config InitializeConfigObject()
@@ -38,7 +44,7 @@ namespace CSLM.Config
             string json = string.Empty;
             try
             {
-                json = File.ReadAllText(_configPath);
+                json = File.ReadAllText(path);
             }
             catch (Exception ex)
             {
@@ -53,6 +59,8 @@ namespace CSLM.Config
             {
                 File.WriteAllText(_configPath, json);
                 _log.DebugWriteLog("INFO", "[ConfigManager:WriteConfigFile] Configuration file written successfully");
+                Console.WriteLine($"[ConfigManager:WriteConfigFile] Writing content: {json}");
+                Console.WriteLine($"[ConfigManager:WriteConfigFile] Configuration file written successfully to {_configPath}");
             }
             catch (Exception ex)
             {
@@ -62,10 +70,35 @@ namespace CSLM.Config
 
         internal Config DeserializeConfig(string config)
         {
-            return JsonConvert.DeserializeObject<Config>(config);
+            try
+            {
+                return JsonConvert.DeserializeObject<Config>(config);
+            }
+            catch (Exception ex)
+            {
+                _log.DebugWriteLog("ERROR", $"[ConfigManager:DeserializeConfig] Failed to parse config: {ex.Message}");
+                _log.DebugWriteLog("ERROR", $"[ConfigManager:DeserializeConfig] Returning default config object");
+                Console.WriteLine($"[ConfigManager:DeserializeConfig] Failed to parse config: {ex.Message}");
+                return new Config();
+            }
         }
 
-        internal Config LoadConfig(string path)
+        internal string SerializeConfig(Config conf)
+        {
+            Console.WriteLine($"[ConfigManager:SerializeConfig] Serializing config object to JSON");
+            Console.WriteLine($"[ConfigManager:SerializeConfig] Content: {JsonConvert.SerializeObject(conf, Formatting.Indented)}");
+            return JsonConvert.SerializeObject(conf, Formatting.Indented);
+        }
+
+        internal void SaveConfigFile(Config conf)
+        {
+            _log.DebugWriteLog("INFO", $"[ConfigManager:SaveConfigFile] Saving configuration file to disk: {conf}");
+            Console.WriteLine($"[ConfigManager:SaveConfigFile] Saving configuration file to disk: {conf}");
+            Console.WriteLine($"[ConfigManager:SaveConfigFile] Content: {conf.logType}");
+            WriteConfigFile(SerializeConfig(conf));
+        }
+
+        internal Config LoadConfigFile(string path)
         {
             if (IfConfigExists(path))
             {
@@ -73,16 +106,17 @@ namespace CSLM.Config
             }
             else
             {
-                return InitializeConfigObject();
+                _log.DebugWriteLog("WARNING", "[ConfigManager:LoadConfigFile] Configuration file not found, creating default config file");
+                Console.WriteLine("[ConfigManager:LoadConfigFile] Configuration file not found, creating default config file");
+                Config conf = InitializeConfigObject();
+                _log.DebugWriteLog("INFO", "[ConfigManager:LoadConfigFile] Default configuration file created");
+                Console.WriteLine("[ConfigManager:LoadConfigFile] Default configuration file created");
+                SaveConfigFile(conf);
+                _log.DebugWriteLog("INFO", "[ConfigManager:LoadConfigFile] Default configuration file saved to disk");
+                Console.WriteLine("[ConfigManager:LoadConfigFile] Default configuration file saved to disk");
+                return conf;
             }
         }
-
-
-
-
-
-
-
     }
 
 }
